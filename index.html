@@ -588,7 +588,7 @@
 <script>
     /* LEADGOSMM v46 setup: enter only the public Supabase project URL and anon key below. Never place service-role, provider, payment, postback-signing, or webhook secrets in this browser file; configure those as Supabase Edge Function secrets. */
     const SUPABASE_URL = "https://robdafouamcmdqaazsyh.supabase.co";
-    const SUPABASE_ANON_KEY = "PASTE_SUPABASE_ANON_KEY_HERE";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvYmRhZm91YW1jbWRxYWF6c3loIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0ODYzNzksImV4cCI6MjExMDA2MjM3OX0.hh1az1Q6vCTl0gNluzvsQ0AZeedUNbyBstyIPvaY2mY";
     const supabaseReady = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_") && SUPABASE_ANON_KEY.length > 20 && !SUPABASE_ANON_KEY.includes("PASTE_");
     const supabaseClient = supabaseReady && window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
     const platforms = [

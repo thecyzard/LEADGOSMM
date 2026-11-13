@@ -864,6 +864,7 @@
 @media(max-width:700px){.allinone-banner .social-icons-hero .orbit-logo{max-width:52px;padding:0!important}.allinone-banner .social-icons-hero .orbit-logo .logo{width:25px;height:25px}}
 </style>
 
+<!-- LEADGOSMM Version 105: retains Version 104 changes; Customer Acquisition platform label is kept on one line on mobile. -->
 <!-- LEADGOSMM Version 94: unique live-catalogue orbit logos, borderless brand marks and no letter fallbacks. -->
 <style id="leadgo-v94-selected-platform-card">
 /* v94: Version 88 selected-platform card appearance, positioned BELOW the Version 93 platform logos. Live catalogue data and service filtering are preserved. */
@@ -1169,6 +1170,125 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:non
 .catalog-shell .catalog-active-platform.platform-featured .platform-featured-copy em{color:color-mix(in srgb,var(--selected-brand,#7257d8) 42%,#68766f)}
 @media(prefers-reduced-motion:reduce){.catalog-shell .catalog-active-platform.platform-featured,.catalog-shell .catalog-active-platform.platform-featured:before,.catalog-shell .catalog-active-platform.platform-featured .platform-featured-mark{transition:none!important}}
 </style>
+
+<style id="leadgo-v103-ios-services-and-policy-modal">
+/* Services: keep the full 48-item page while allowing mobile browsers to skip off-screen card rendering. */
+@media (max-width:700px) and (hover:none) and (pointer:coarse){
+  #service-grid>.service-card{
+    content-visibility:auto;
+    contain-intrinsic-size:auto 230px;
+  }
+  #service-grid>.service-card:hover{
+    transform:none;
+    box-shadow:0 7px 22px rgba(24,54,40,.045);
+  }
+  .catalog-shell .platform-others .platform-tab:hover{
+    transform:none;
+    box-shadow:none;
+  }
+  /* Avoid expensive live backdrop filtering while scrolling on touch devices. */
+  .site-header,.floating-nav{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background:rgba(255,255,255,.97);
+  }
+}
+/* Footer policy links: comfortable touch targets and no clipped/wrapped links on narrow iPhones. */
+@media(max-width:700px){
+  .footer-bottom .policy-links{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:5px 12px;
+    margin-top:10px;
+    max-width:100%;
+  }
+  .footer-bottom .policy-links a{
+    display:inline-flex;
+    align-items:center;
+    min-height:40px;
+    padding:7px 0;
+    line-height:1.35;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+}
+/* Policy modal: keep the Close action visible while only the policy text scrolls. */
+@media(max-width:700px){
+  #policy-modal{
+    align-items:flex-start;
+    padding-top:calc(var(--leadgo-visual-viewport-top,0px) + max(8px,env(safe-area-inset-top)));
+    padding-bottom:max(8px,env(safe-area-inset-bottom));
+  }
+  #policy-modal .modalbox{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    max-height:calc(var(--leadgo-visual-viewport-height,100vh) - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow:hidden;
+    padding:16px 15px max(10px,env(safe-area-inset-bottom));
+    overscroll-behavior:contain;
+  }
+  #policy-modal .modalhead{flex:0 0 auto;position:relative;z-index:2;background:#fff}
+  #policy-modal .modalbox h2{flex:0 0 auto;margin-top:14px}
+  #policy-copy{
+    flex:1 1 auto;
+    min-height:0;
+    overflow-x:hidden;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-gutter:auto;
+    padding-bottom:8px;
+  }
+  #policy-modal .modal-actions{
+    position:relative;
+    z-index:3;
+    flex:0 0 auto;
+    bottom:auto;
+    margin:8px 0 0;
+    padding:10px 0 max(4px,env(safe-area-inset-bottom));
+    background:#fff;
+    box-shadow:0 -8px 18px rgba(255,255,255,.92);
+  }
+  #policy-dismiss{
+    width:100%;
+    min-height:44px;
+  }
+  #policy-close{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;min-width:40px;min-height:40px;border-radius:9px;background:#f3f7f4;font-size:24px;line-height:1}
+}
+@media(prefers-reduced-motion:reduce){
+  #service-grid>.service-card{scroll-behavior:auto;transition:none!important}
+}
+</style>
+
+
+<style id="leadgo-v104-platform-label-fit">
+/* Keep every platform label inside its own tile, including long names on narrow phones. */
+.catalog-shell .platform-others .platform-tab{min-width:0;max-width:100%;}
+.catalog-shell .platform-others .platform-tab > span:last-child{display:block;flex:1 1 auto;min-width:0;white-space:normal;overflow-wrap:break-word;word-break:normal;line-height:1.2;text-wrap:pretty;}
+.catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"]{gap:5px;padding-left:6px;padding-right:6px;}
+.catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"] > span:last-child{font-size:clamp(7px,2.15vw,9px);letter-spacing:-.015em;line-height:1.14;}
+.catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"] .cpa-platform-icon{flex:0 0 17px;width:17px;height:17px;}
+@media(max-width:360px){.catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"]{gap:4px;padding-left:5px;padding-right:5px;} .catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"] > span:last-child{font-size:7px;}}
+</style>
+
+<style id="leadgo-v105-customer-acquisition-single-line">
+/* Keep Customer Acquisition on one line; scale its label to the available tile width on phones. */
+@media(max-width:700px){
+  .catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"]{display:flex;align-items:center;justify-content:flex-start;gap:3px;min-width:0;padding-left:4px;padding-right:4px;overflow:hidden;}
+  .catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"] .cpa-platform-icon{flex:0 0 12px;width:12px;height:12px;}
+  .catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"] .cpa-platform-icon svg{width:12px;height:12px;}
+  .catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"] > span:last-child{display:block;flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:clip;overflow-wrap:normal;word-break:normal;font-size:clamp(5px,1.55vw,6.5px);font-weight:650;letter-spacing:-.045em;line-height:1;text-wrap:nowrap;}
+}
+@media(max-width:340px){
+  .catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"]{gap:2px;padding-left:3px;padding-right:3px;}
+  .catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"] .cpa-platform-icon{flex-basis:11px;width:11px;height:11px;}
+  .catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"] .cpa-platform-icon svg{width:11px;height:11px;}
+  .catalog-shell .platform-others .platform-tab[data-platform="Customer Acquisition"] > span:last-child{font-size:5px;letter-spacing:-.055em;}
+}
+</style>
+
 </head>
 <body>
   <header class="site-header"><div class="wrap nav"><a class="brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 4.5V19.5H18" stroke="white" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>LEADGO</strong><em>SMM</em></a><nav class="navlinks" id="navlinks"><a href="#services">Services</a><a href="#pricing">Prices</a><a href="#all-in-one">Platform</a><a href="#advertiser-request">Customer Acquisition</a><a href="#business">API & Resellers</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a></nav><div class="navactions"><button class="signin" id="signin" type="button" aria-haspopup="dialog" aria-controls="auth-modal">Sign in</button><a class="button green" href="#auth-modal" id="get-started" aria-haspopup="dialog" aria-controls="auth-modal">Get started</a></div><button class="menu" id="menu" aria-label="Open menu">☰</button></div></header><div class="floating-nav" id="floating-nav"><div class="floating-inner"><a class="floating-brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 4.5V19.5H18" stroke="white" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>LEADGO</strong><em>SMM</em></a><nav class="floating-links"><a href="#services">Services</a><a href="#pricing" data-open-prices>Prices</a><a href="#services" data-floating-platform="YouTube"><img class="logo" src="https://cdn.simpleicons.org/youtube/ff0000" alt="YouTube" />YouTube</a><a href="#services" data-floating-platform="Instagram"><img class="logo" src="https://cdn.simpleicons.org/instagram/e4405f" alt="Instagram" />Instagram</a><a href="#services" data-floating-platform="TikTok"><img class="logo" src="https://cdn.simpleicons.org/tiktok/111111" alt="TikTok" />TikTok</a><a href="#services" data-floating-platform="Twitch"><img class="logo" src="https://cdn.simpleicons.org/twitch/9146ff" alt="Twitch" />Twitch</a><a href="#services" data-floating-platform="Kick"><img class="logo" src="https://cdn.simpleicons.org/kick/53fc18" alt="Kick" />Kick</a><a href="#business">API & Resellers</a></nav><a class="button green floating-action" id="floating-order-now" data-order-now="true" href="#services" aria-label="Start an order" title="Start an order">Order now</a></div></div>

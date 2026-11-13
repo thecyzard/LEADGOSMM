@@ -1289,6 +1289,28 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:non
 }
 </style>
 
+
+<style id="leadgo-v106-admin-advertiser-request-management">
+#lg41-admin-data .lg106-request-section{margin:20px 0 25px;min-width:0}
+#lg41-admin-data .lg106-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;padding:0 0 9px;border-bottom:1px solid var(--line,#e5e9ed)}
+#lg41-admin-data .lg106-section-head h6{margin:0;color:var(--navy,#1d2935);font:700 13px/1.35 var(--sans,Arial)}
+#lg41-admin-data .lg106-section-head p{margin:4px 0 0;color:var(--muted,#71808b);font:10px/1.5 var(--sans,Arial)}
+#lg41-admin-data .lg106-section-head>span{display:grid;place-items:center;min-width:27px;height:25px;padding:0 7px;border:1px solid var(--line,#e5e9ed);border-radius:7px;background:var(--surface,#fff);color:var(--muted,#71808b);font:600 10px var(--mono,monospace)}
+#lg41-admin-data .lg106-request-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#lg41-admin-data .lg106-request-card{min-width:0;margin:0;padding:14px;border-color:var(--line,#e5e9ed);box-shadow:0 3px 12px rgba(29,28,43,.025)}
+#lg41-admin-data .lg106-request-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+#lg41-admin-data .lg106-request-title{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-width:0}
+#lg41-admin-data .lg106-request-title>b{min-width:0;overflow-wrap:anywhere;color:var(--navy,#1d2935);font:700 11px/1.45 var(--sans,Arial)}
+#lg41-admin-data .lg106-visibility-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:0 0 auto;min-height:32px;padding:0 9px;border-color:var(--line,#e5e9ed);border-radius:7px;background:var(--surface,#fff);color:var(--muted,#687783);font:600 9px var(--sans,Arial)}
+#lg41-admin-data .lg106-visibility-btn:hover{border-color:var(--leadgo-violet,#7257d8);background:var(--leadgo-violet-soft,#f4f1ff);color:var(--leadgo-violet-dark,#5d43be)}
+#lg41-admin-data .lg106-visibility-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#lg41-admin-data .lg106-no-hide{flex:0 0 auto;color:var(--muted,#71808b);font:9px var(--sans,Arial)}
+#lg41-admin-data .lg106-request-card>details{margin-top:10px}
+#lg41-admin-data .lg106-request-card>details>summary{color:var(--leadgo-violet-dark,#5d43be);font:600 10px var(--sans,Arial);cursor:pointer}
+#lg41-admin-data .lg106-request-card .cust-list>div{min-width:0;overflow-wrap:anywhere}
+@media(max-width:760px){#lg41-admin-data .lg106-request-grid{grid-template-columns:minmax(0,1fr)}#lg41-admin-data .lg106-request-card{padding:13px}#lg41-admin-data .lg106-section-head h6{font-size:12px}}
+@media(prefers-reduced-motion:no-preference){#lg41-admin-data .lg106-visibility-btn{transition:background .16s,border-color .16s,color .16s}}
+</style>
 </head>
 <body>
   <header class="site-header"><div class="wrap nav"><a class="brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 4.5V19.5H18" stroke="white" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>LEADGO</strong><em>SMM</em></a><nav class="navlinks" id="navlinks"><a href="#services">Services</a><a href="#pricing">Prices</a><a href="#all-in-one">Platform</a><a href="#advertiser-request">Customer Acquisition</a><a href="#business">API & Resellers</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a></nav><div class="navactions"><button class="signin" id="signin" type="button" aria-haspopup="dialog" aria-controls="auth-modal">Sign in</button><a class="button green" href="#auth-modal" id="get-started" aria-haspopup="dialog" aria-controls="auth-modal">Get started</a></div><button class="menu" id="menu" aria-label="Open menu">☰</button></div></header><div class="floating-nav" id="floating-nav"><div class="floating-inner"><a class="floating-brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 4.5V19.5H18" stroke="white" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>LEADGO</strong><em>SMM</em></a><nav class="floating-links"><a href="#services">Services</a><a href="#pricing" data-open-prices>Prices</a><a href="#services" data-floating-platform="YouTube"><img class="logo" src="https://cdn.simpleicons.org/youtube/ff0000" alt="YouTube" />YouTube</a><a href="#services" data-floating-platform="Instagram"><img class="logo" src="https://cdn.simpleicons.org/instagram/e4405f" alt="Instagram" />Instagram</a><a href="#services" data-floating-platform="TikTok"><img class="logo" src="https://cdn.simpleicons.org/tiktok/111111" alt="TikTok" />TikTok</a><a href="#services" data-floating-platform="Twitch"><img class="logo" src="https://cdn.simpleicons.org/twitch/9146ff" alt="Twitch" />Twitch</a><a href="#services" data-floating-platform="Kick"><img class="logo" src="https://cdn.simpleicons.org/kick/53fc18" alt="Kick" />Kick</a><a href="#business">API & Resellers</a></nav><a class="button green floating-action" id="floating-order-now" data-order-now="true" href="#services" aria-label="Start an order" title="Start an order">Order now</a></div></div>
@@ -2024,16 +2046,34 @@ const ready=()=>{
   const r=await client.from('advertiser_campaign_requests').select('id,user_id,request_data,status,created_at').order('created_at',{ascending:false}).limit(100);
   if(r.error)return dbError(r.error);
   const rows=r.data||[];
-  const cards=await Promise.all(rows.map(async row=>{
+  const hiddenKey='leadgo:admin:hidden-advertiser-requests:'+String(currentUser?.id||'unknown');
+  const readHidden=()=>{try{const value=JSON.parse(localStorage.getItem(hiddenKey)||'[]');return new Set(Array.isArray(value)?value.map(String):[])}catch(_){return new Set()}};
+  const writeHidden=set=>{try{localStorage.setItem(hiddenKey,JSON.stringify([...set]))}catch(_){toast('The browser could not save this hide preference. Check available site storage.')}};
+  const hidden=readHidden();
+  const groups={pending:[],approved:[],rejected:[],hidden:[]};
+  rows.forEach(row=>{
+    const state=String(row.status||'pending').toLowerCase();
+    if((state==='approved'||state==='rejected')&&hidden.has(String(row.id)))groups.hidden.push(row);
+    else (groups[state]||groups.pending).push(row);
+  });
+  const renderCard=async(row,isHidden=false)=>{
     const data=row.request_data&&typeof row.request_data==='object'?row.request_data:{};
     const filePaths=Array.isArray(data['Upload Creatives / Supporting Documents'])?data['Upload Creatives / Supporting Documents']:[];
-    const fileLinks=await Promise.all(filePaths.map(async path=>{const signed=await client.storage.from('advertiser-campaign-files').createSignedUrl(path,3600);return signed.error?'<span>'+safe(path.split('/').pop())+' (file unavailable)</span>':'<a href="'+safe(signed.data.signedUrl)+'" target="_blank" rel="noopener">'+safe(path.split('/').pop())+'</a>'}));
+    const fileLinks=await Promise.all(filePaths.map(async path=>{const signed=await client.storage.from('advertiser-campaign-files').createSignedUrl(path,3600);return signed.error?'<span>'+safe(String(path).split('/').pop())+' (file unavailable)</span>':'<a href="'+safe(signed.data.signedUrl)+'" target="_blank" rel="noopener">'+safe(String(path).split('/').pop())+'</a>'}));
     const details=Object.entries(data).map(([key,value])=>'<div><b>'+safe(key)+'</b><span>'+(key==='Upload Creatives / Supporting Documents'?fileLinks.join('<br>')||'None':safe(typeof value==='string'?value:JSON.stringify(value)))+'</span></div>').join('');
-    const status=String(row.status||'pending').toLowerCase();
-    const actions=status==='pending'?'<div class="lg40-actions"><button type="button" class="lg40-btn primary" data-request-decision="approved" data-id="'+safe(row.id)+'">Approve request</button><button type="button" class="lg40-btn" data-request-decision="rejected" data-id="'+safe(row.id)+'">Reject request</button></div>':'<p class="lg40-muted">This request has already been reviewed.</p>';
-    return '<article class="lg40-card"><div class="lg40-actions"><b>'+safe(data['Campaign Name']||'Campaign request')+'</b><span class="lg70-request-badge status-'+safe(status)+'">'+safe(status)+'</span></div><p class="lg40-muted">Submitted '+safe(row.created_at?new Date(row.created_at).toLocaleString():'')+' · Account '+safe(row.user_id||'')+'</p><details><summary>View all 12 submitted fields</summary><div class="cust-list">'+(details||'<p>No request details were stored.</p>')+'</div></details>'+actions+'</article>';
-  }));
-  dest.innerHTML='<h5>Customer Acquisition requests</h5><p class="lg40-muted">New requests and review decisions update automatically while this screen is open. Approving or rejecting a request immediately updates the advertiser’s request status.</p><div class="cust-list">'+(cards.join('')||'<p>No Customer Acquisition requests have been submitted yet.</p>')+'</div>';
+    const state=String(row.status||'pending').toLowerCase();
+    const reviewed=state==='approved'||state==='rejected';
+    const decisionActions=state==='pending'?'<div class="lg40-actions"><button type="button" class="lg40-btn primary" data-request-decision="approved" data-id="'+safe(row.id)+'">Approve request</button><button type="button" class="lg40-btn" data-request-decision="rejected" data-id="'+safe(row.id)+'">Reject request</button></div>':'<p class="lg40-muted">This request has already been reviewed.</p>';
+    const visibilityAction=reviewed?(isHidden?'<button type="button" class="lg40-btn lg106-visibility-btn" data-request-unhide="'+safe(row.id)+'" aria-label="Unhide this request" title="Unhide request"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><span>Unhide</span></button>':'<button type="button" class="lg40-btn lg106-visibility-btn" data-request-hide="'+safe(row.id)+'" aria-label="Hide this reviewed request" title="Hide request"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><span>Hide</span></button>'):'<span class="lg106-no-hide">Awaiting review</span>';
+    return '<article class="lg40-card lg106-request-card"><div class="lg106-request-head"><div class="lg106-request-title"><b>'+safe(data['Campaign Name']||'Campaign request')+'</b><span class="lg70-request-badge status-'+safe(state)+'">'+safe(state)+'</span></div>'+visibilityAction+'</div><p class="lg40-muted">Submitted '+safe(row.created_at?new Date(row.created_at).toLocaleString():'')+' · Account '+safe(row.user_id||'')+'</p><details><summary>View all 12 submitted fields</summary><div class="cust-list">'+(details||'<p>No request details were stored.</p>')+'</div></details>'+decisionActions+'</article>';
+  };
+  const section=async(title,key,description='')=>{
+    const cards=await Promise.all(groups[key].map(row=>renderCard(row,key==='hidden')));
+    return '<section class="lg106-request-section"><div class="lg106-section-head"><div><h6>'+title+'</h6>'+(description?'<p>'+description+'</p>':'')+'</div><span>'+groups[key].length+'</span></div>'+(cards.length?'<div class="lg106-request-grid">'+cards.join('')+'</div>':'<div class="lg40-empty">No '+title.toLowerCase()+' requests.</div>')+'</section>';
+  };
+  dest.innerHTML='<h5>Customer Acquisition requests</h5><p class="lg40-muted">New requests and review decisions update automatically while this screen is open. Approving or rejecting a request immediately updates the advertiser’s request status. Reviewed requests can be hidden from this admin view and restored from Hidden requests. Hide preferences are saved in this browser for this admin account.</p>'+await section('Pending','pending','Requests awaiting an admin decision.')+await section('Approved','approved','Approved requests remain available here until hidden.')+await section('Rejected','rejected','Rejected requests remain available here until hidden.')+await section('Hidden requests','hidden','Only approved and rejected requests can be hidden. Restore any request with Unhide.');
+  dest.querySelectorAll('[data-request-hide]').forEach(button=>button.addEventListener('click',()=>{const id=String(button.dataset.requestHide);const next=readHidden();next.add(id);writeHidden(next);loadAdminTable('advertiser_requests')}));
+  dest.querySelectorAll('[data-request-unhide]').forEach(button=>button.addEventListener('click',()=>{const id=String(button.dataset.requestUnhide);const next=readHidden();next.delete(id);writeHidden(next);loadAdminTable('advertiser_requests')}));
   dest.querySelectorAll('[data-request-decision]').forEach(button=>button.addEventListener('click',async()=>{
     const id=button.dataset.id,nextStatus=button.dataset.requestDecision;
     if(!confirm((nextStatus==='approved'?'Approve':'Reject')+' this Customer Acquisition request?'))return;
@@ -2046,7 +2086,6 @@ const ready=()=>{
   }));
   return;
  }
-
  const map={
   orders:['orders','id,status,total_amount,created_at'],users:['profiles','id,full_name,role,account_status,created_at'],services:['smm_services','id,service_code,name,platform,active,price_per_thousand'],
   campaigns:['campaigns','id,name,model,status,budget,spent,created_at'],applications:['campaign_applications','id,campaign_id,publisher_id,status,created_at'],conversions:['conversions','id,campaign_id,publisher_id,amount,status,created_at'],

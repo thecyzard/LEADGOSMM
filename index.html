@@ -1364,6 +1364,43 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:non
 @media(max-width:380px){#advertiser-request-form .lg70-campaign-duration>div{grid-template-columns:minmax(0,1fr)}#lg70-advertiser-request-status .lg107-request-tab,#lg70-advertiser-workspace-requests .lg107-request-tab{gap:4px;font-size:9px}}
 @media(prefers-reduced-motion:reduce){#lg70-advertiser-request-status .lg107-request-tab,#lg70-advertiser-workspace-requests .lg107-request-tab{transition:none}}
 </style>
+
+<style id="leadgo-cpa-ios-control-fit-v110">
+/* v110: keep Customer Acquisition form controls inside their own card on narrow iPhone viewports. */
+#advertiser-request-form,
+#advertiser-request-form .cpa-form-grid,
+#advertiser-request-form .cpa-form-grid > label,
+#advertiser-request-form .lg70-field,
+#advertiser-request-form .lg70-campaign-duration,
+#advertiser-request-form .lg70-campaign-duration > div,
+#advertiser-request-form .lg70-campaign-duration label,
+#advertiser-request-form .lg70-picker { min-width:0; max-width:100%; }
+#advertiser-request-form .cpa-form-grid > label > input,
+#advertiser-request-form .cpa-form-grid > label > select,
+#advertiser-request-form .cpa-form-grid > label > textarea,
+#advertiser-request-form .lg70-campaign-duration input,
+#advertiser-request-form .lg70-picker > summary,
+#advertiser-request-form .lg70-picker-search,
+#advertiser-request-form input[type="file"] {
+  width:100%; min-width:0; max-width:100%; box-sizing:border-box;
+}
+#advertiser-request-form input[type="date"] {
+  display:block; min-width:0!important; width:100%!important; max-width:100%!important;
+  box-sizing:border-box!important; padding-inline:8px; font-size:16px;
+  -webkit-appearance:none; appearance:none;
+}
+#advertiser-request-form .lg70-campaign-duration > div {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+}
+#advertiser-request-form .lg70-campaign-duration label { min-width:0; max-width:100%; overflow:hidden; }
+@media(max-width:620px){
+  #advertiser-request-form .lg70-campaign-duration > div { grid-template-columns:minmax(0,1fr); gap:10px; }
+  #advertiser-request-form .lg70-campaign-duration label,
+  #advertiser-request-form .cpa-form-grid > label { min-width:0; width:100%; }
+  #advertiser-request-form input[type="date"] { min-height:46px; padding:10px 9px; }
+  #advertiser-request-form input[type="file"] { display:block; overflow:hidden; }
+}
+</style>
 </head>
 <body>
   <header class="site-header"><div class="wrap nav"><a class="brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 4.5V19.5H18" stroke="white" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>LEADGO</strong><em>SMM</em></a><nav class="navlinks" id="navlinks"><a href="#services">Services</a><a href="#pricing">Prices</a><a href="#all-in-one">Platform</a><a href="#advertiser-request">Customer Acquisition</a><a href="#business">API & Resellers</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a></nav><div class="navactions"><button class="signin" id="signin" type="button" aria-haspopup="dialog" aria-controls="auth-modal">Sign in</button><a class="button green" href="#auth-modal" id="get-started" aria-haspopup="dialog" aria-controls="auth-modal">Get started</a></div><button class="menu" id="menu" aria-label="Open menu">☰</button></div></header><div class="floating-nav" id="floating-nav"><div class="floating-inner"><a class="floating-brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 4.5V19.5H18" stroke="white" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>LEADGO</strong><em>SMM</em></a><nav class="floating-links"><a href="#services">Services</a><a href="#pricing" data-open-prices>Prices</a><a href="#services" data-floating-platform="YouTube"><img class="logo" src="https://cdn.simpleicons.org/youtube/ff0000" alt="YouTube" />YouTube</a><a href="#services" data-floating-platform="Instagram"><img class="logo" src="https://cdn.simpleicons.org/instagram/e4405f" alt="Instagram" />Instagram</a><a href="#services" data-floating-platform="TikTok"><img class="logo" src="https://cdn.simpleicons.org/tiktok/111111" alt="TikTok" />TikTok</a><a href="#services" data-floating-platform="Twitch"><img class="logo" src="https://cdn.simpleicons.org/twitch/9146ff" alt="Twitch" />Twitch</a><a href="#services" data-floating-platform="Kick"><img class="logo" src="https://cdn.simpleicons.org/kick/53fc18" alt="Kick" />Kick</a><a href="#business">API & Resellers</a></nav><a class="button green floating-action" id="floating-order-now" data-order-now="true" href="#services" aria-label="Start an order" title="Start an order">Order now</a></div></div>
@@ -1662,9 +1699,9 @@ document.getElementById("get-started").addEventListener("click",e=>{e.preventDef
         const action=reviewed?'<button type="button" class="lg40-btn lg106-visibility-btn" '+(isHidden?'data-customer-unhide="':'data-customer-hide="')+escRequest(row.id)+'" aria-label="'+(isHidden?'Unhide':'Hide')+' this request" title="'+(isHidden?'Unhide':'Hide')+' request">'+eye+'<span>'+(isHidden?'Unhide':'Hide')+'</span></button>':'<span class="lg106-no-hide">Awaiting review</span>';
         return '<article class="lg40-card lg106-request-card"><div class="lg106-request-head"><div class="lg106-request-title"><b>'+escRequest(data['Campaign Name']||'Campaign request')+'</b><span class="lg70-request-badge status-'+escRequest(st)+'">'+escRequest(st)+'</span></div>'+action+'</div><p class="lg40-muted">Submitted '+escRequest(row.created_at?new Date(row.created_at).toLocaleString():'')+'</p><details><summary>View request details</summary><div class="cust-list">'+(details||'<p>No request details saved.</p>')+'</div></details></article>';
       };
-      host.innerHTML='<div class="lg70-request-status-head"><strong>My Customer Acquisition requests</strong><span class="lg40-muted">Live status</span></div><p class="lg70-customer-request-note">Your requests and review decisions update automatically.</p><nav class="lg107-request-tabs" role="tablist" aria-label="My Customer Acquisition request status">'+keys.map(k=>'<button type="button" class="lg107-request-tab" role="tab" id="lg70-tab-'+k+'" aria-controls="lg70-panel-'+k+'" aria-selected="'+(k===active?'true':'false')+'" data-customer-tab="'+k+'">'+labels[k]+'<span>'+groups[k].length+'</span></button>').join('')+'</nav>'+await Promise.all(keys.map(async k=>'<section class="lg107-request-panel" role="tabpanel" id="lg70-panel-'+k+'" aria-labelledby="lg70-tab-'+k+'" '+(k===active?'':'hidden')+'><div class="lg106-request-grid">'+(await Promise.all(groups[k].map(card))).join('')+'</div>'+(groups[k].length?'':'<div class="lg40-empty">No '+labels[k].toLowerCase()+' requests yet.</div>')+'</section>')).then(a=>a.join(''));
+      host.innerHTML='<div class="lg70-request-status-head"><strong>My Customer Acquisition requests</strong><span class="lg40-muted">Live status</span></div><p class="lg70-customer-request-note">Your requests and review decisions update automatically.</p><nav class="lg107-request-tabs" role="tablist" aria-label="My Customer Acquisition request status">'+keys.map(k=>'<button type="button" class="lg107-request-tab" role="tab" id="'+prefix+'-tab-'+k+'" aria-controls="'+prefix+'-panel-'+k+'" aria-selected="'+(k===active?'true':'false')+'" tabindex="'+(k===active?'0':'-1')+'" data-customer-tab="'+k+'">'+labels[k]+'<span>'+groups[k].length+'</span></button>').join('')+'</nav>'+await Promise.all(keys.map(async k=>'<section class="lg107-request-panel" role="tabpanel" id="'+prefix+'-panel-'+k+'" data-request-panel="'+k+'" aria-labelledby="'+prefix+'-tab-'+k+'" '+(k===active?'':'hidden')+'><div class="lg106-request-grid">'+(await Promise.all(groups[k].map(card))).join('')+'</div>'+(groups[k].length?'':'<div class="lg40-empty">No '+labels[k].toLowerCase()+' requests yet.</div>')+'</section>')).then(a=>a.join(''));
       host.dataset.requestTab=active;
-      host.querySelectorAll('[data-customer-tab]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.customerTab;host.dataset.requestTab=k;host.querySelectorAll('[data-customer-tab]').forEach(t=>{t.setAttribute('aria-selected',String(t===b));t.tabIndex=t===b?0:-1});host.querySelectorAll('.lg107-request-panel').forEach(p=>p.hidden=p.dataset.requestPanel!==k)}));
+      host.querySelectorAll('[data-customer-tab]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.customerTab;if(!keys.includes(k))return;host.dataset.requestTab=k;host.querySelectorAll('[data-customer-tab]').forEach(t=>{const selected=t===b;t.setAttribute('aria-selected',String(selected));t.tabIndex=selected?0:-1});host.querySelectorAll('.lg107-request-panel[data-request-panel]').forEach(p=>{p.hidden=p.dataset.requestPanel!==k})}));
       host.querySelectorAll('[data-customer-hide]').forEach(b=>b.addEventListener('click',()=>{const set=readHidden();set.add(String(b.dataset.customerHide));if(writeHidden(set))renderMyAdvertiserRequestTabs(host,rows,userId)}));
       host.querySelectorAll('[data-customer-unhide]').forEach(b=>b.addEventListener('click',()=>{const set=readHidden();set.delete(String(b.dataset.customerUnhide));if(writeHidden(set))renderMyAdvertiserRequestTabs(host,rows,userId)}));
     }

@@ -2067,7 +2067,8 @@ const ready=()=>{
   const subscribedTables=workspaceRealtimeRoleTables[role]||new Set();
   workspaceRealtimeTables.forEach(table=>{
    if(!subscribedTables.has(table)||table==='advertiser_campaign_requests')return; // existing dedicated request channel handles this table
-   const filterColumn=role==='admin'?null:workspaceRealtimeUserFilters[table];
+   // Notifications are always scoped to the signed-in account, including Admin.
+   const filterColumn=table==='notifications'?'user_id':(role==='admin'?null:workspaceRealtimeUserFilters[table]);
    const config={event:'*',schema:'public',table};
    if(filterColumn)config.filter=filterColumn+'=eq.'+currentUser.id;
    channel.on('postgres_changes',config,()=>queueWorkspaceRealtimeRefresh(role,table));
@@ -2081,7 +2082,7 @@ const ready=()=>{
     workspaceRealtimeFallback=setInterval(()=>{
      if(!currentUser||!currentProfile||currentProfile.role!==role)return;
      if(role==='customer')loadCustomer().catch(dbError);
-     else if(role==='admin')loadAdminTable(lg70ActiveAdminTable);
+     else if(role==='admin'){refreshAdminNotificationBadge().catch(dbError);loadAdminTable(lg70ActiveAdminTable).catch(dbError)}
      else renderRoleData(role);
     },20000);
    }
@@ -2126,17 +2127,31 @@ const ready=()=>{
   if(row){row.classList.add('is-highlighted');row.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});}
   else toast('The linked order is not visible in your current order history.');
  }
- async function openNotificationTarget(role,n){
-  if(!n)return;
-  const type=String(n.entity_type||n.metadata?.entity_type||'').toLowerCase().replaceAll('-','_');
+ function getNotificationDestination(n){
+  if(!n)return null;
   const meta=n.metadata&&typeof n.metadata==='object'?n.metadata:{};
-  const requestKind=meta.request_type||n.entity_type;
-  if(['advertiser_campaign_request','advertiser_campaign_requests','advertiser_request','customer_acquisition','telegram_ads'].includes(type)||meta.request_type){
-   if(n.entity_id)await openRequestNotification(role,n.entity_id,requestKind);return;
+  const type=String(n.entity_type||meta.entity_type||n.type||'').toLowerCase().replaceAll('-','_');
+  const action=String(n.action_url||'').toLowerCase();
+  const requestTypes=['advertiser_campaign_request','advertiser_campaign_requests','advertiser_request','customer_acquisition','telegram_ads'];
+  const isRequest=requestTypes.includes(type)||!!meta.request_type||action.includes('advertiser-requests')||action.includes('customer-acquisition')||action.includes('telegram-ads');
+  if(isRequest){
+   const id=n.entity_id||meta.request_id||meta.entity_id||n.reference_id;
+   if(id)return {kind:'request',id,requestKind:meta.request_type||(action.includes('telegram-ads')?'telegram-ads':n.entity_type)};
   }
-  const orderId=meta.order_id||meta.related_order_id||(['order','orders','smm_order','payment','order_payment','payment_status'].includes(type)?n.entity_id:null);
-  if(orderId){await openOrderNotification(role,orderId);return;}
-  if(n.entity_id)toast('This notification does not contain a supported destination yet.');
+  const orderTypes=['order','orders','smm_order','order_payment','payment_status'];
+  const orderRefund=type==='payment'&&/order.{0,20}refund|refund.{0,20}order/i.test(String(n.title||'')+' '+String(n.body||''));
+  const isOrder=orderTypes.includes(type)||action.includes('admin:orders')||action.includes('/orders/')||orderRefund;
+  if(isOrder){
+   const id=meta.order_id||meta.related_order_id||meta.entity_id||n.entity_id||n.reference_id;
+   if(id)return {kind:'order',id};
+  }
+  return null;
+ }
+ async function openNotificationTarget(role,n){
+  const target=getNotificationDestination(n);
+  if(!target){toast('This notification does not contain a supported destination yet.');return;}
+  if(target.kind==='request'){await openRequestNotification(role,target.id,target.requestKind);return;}
+  if(target.kind==='order'){await openOrderNotification(role,target.id);return;}
  }
  async function openRequestNotification(role,id,kind){const isTelegram=kind==='Telegram Ads Solution'||kind==='telegram-ads';if(role==='admin'){const d=root.querySelector('#lg41-admin-data');if(d){d.dataset.requestKind=isTelegram?'telegram-ads':'customer-acquisition';const statusRow=await client.from('advertiser_campaign_requests').select('status').eq('id',id).maybeSingle();if(statusRow.error)return dbError(statusRow.error);if(statusRow.data?.status)d.dataset.requestTab=statusRow.data.status}lg70ActiveAdminTable='advertiser_requests';await loadAdminTable('advertiser_requests');const card=root.querySelector('[data-request-id="'+CSS.escape(String(id))+'"]');if(card){card.classList.add('is-highlighted');card.scrollIntoView({behavior:'smooth',block:'center'})}return;}const statusRow=await client.from('advertiser_campaign_requests').select('status,request_data').eq('id',id).eq('user_id',currentUser.id).maybeSingle();if(statusRow.error)return dbError(statusRow.error);const requestIsTelegram=statusRow.data?.request_data?.['Request Type']==='Telegram Ads Solution'||isTelegram;const host=document.getElementById(requestIsTelegram?'lg70-telegram-ads-status':'lg70-advertiser-request-status');if(host&&statusRow.data?.status)host.dataset.requestTab=statusRow.data.status;await openRequestWorkspace(requestIsTelegram?'telegram-ads':'customer-acquisition');await loadMyAdvertiserRequests(currentUser.id);const card=document.querySelector('[data-request-id="'+CSS.escape(String(id))+'"][id^="lg122-customer-request-"]');if(card){card.classList.add('is-highlighted');card.scrollIntoView({behavior:'smooth',block:'center'})}}
  async function loadCustomer(){const uid=currentUser.id;const [profile,wallet,orders,tx,notes,tickets]=await Promise.all([
@@ -2149,7 +2164,7 @@ const ready=()=>{
  const metrics=cust.querySelector('[data-customer-view="overview"] .cust-metrics');if(metrics){const rows=orders.data||[];const balance=wallet.data?.available||0;const spent=(tx.data||[]).filter(t=>t.type==='order').reduce((s,t)=>s+Math.abs(Number(t.amount)),0);metrics.innerHTML=[['Total orders',rows.length],['Pending orders',rows.filter(x=>x.status==='pending').length],['Completed orders',rows.filter(x=>x.status==='completed').length],['Cancelled orders',rows.filter(x=>x.status==='cancelled').length],['Wallet balance',money(balance)],['Total spending',money(spent)]].map(([a,b])=>`<article><small>${a}</small><strong>${b}</strong></article>`).join('')}
  const orderBody=cust.querySelector('[data-customer-view="orders"] tbody');if(orderBody)orderBody.innerHTML=(orders.data||[]).length?(orders.data||[]).map(o=>`<tr data-customer-order-row="${safe(o.id)}"><td>${safe(o.id.slice(0,8))}</td><td>${safe(o.smm_services?.name||o.service_id)}</td><td>${o.quantity}</td><td>${money(o.total_amount)}</td><td>${safe(o.status)}</td><td>${new Date(o.created_at).toLocaleString()}</td></tr>`).join(''):'<tr><td colspan="6">No orders yet.</td></tr>';
  const txBody=cust.querySelector('[data-customer-view="transactions"] tbody');if(txBody)txBody.innerHTML=(tx.data||[]).length?tx.data.map(t=>`<tr><td>${safe(t.reference||t.id.slice(0,8))}</td><td>${safe(t.type)}</td><td>${money(t.amount)}</td><td>${safe(t.status)}</td><td>${new Date(t.created_at).toLocaleString()}</td></tr>`).join(''):'<tr><td colspan="5">No transactions yet.</td></tr>';
- const noteView=cust.querySelector('#lg122-customer-notifications');const unreadNotes=(notes.data||[]).filter(n=>!n.read_at).length;updateNotificationBadge(cust.querySelector('[data-cview="notifications"]'),unreadNotes);if(noteView)noteView.innerHTML=(notes.data||[]).length?notes.data.map(n=>`<div class="lg122-notification-item ${n.read_at?'':'is-unread'}" data-notification-id="${safe(n.id)}"><b>${safe(n.title||'Account update')}</b><span>${safe(n.body||'You have a new account update.')} · ${new Date(n.created_at).toLocaleString()} ${n.read_at?'· Read':'· Unread'}${n.entity_id?` <button type="button" class="cust-link" data-open-note="${safe(n.id)}">View update</button>`:''}</span></div>`).join(''):'<div><b>No notifications yet</b><span>New request decisions and account updates will appear here.</span></div>';
+ const noteView=cust.querySelector('#lg122-customer-notifications');const unreadNotes=(notes.data||[]).filter(n=>!n.read_at).length;updateNotificationBadge(cust.querySelector('[data-cview="notifications"]'),unreadNotes);if(noteView)noteView.innerHTML=(notes.data||[]).length?notes.data.map(n=>`<div class="lg122-notification-item ${n.read_at?'':'is-unread'}" data-notification-id="${safe(n.id)}"><b>${safe(n.title||'Account update')}</b><span>${safe(n.body||'You have a new account update.')} · ${new Date(n.created_at).toLocaleString()} ${n.read_at?'· Read':'· Unread'}${getNotificationDestination(n)?` <button type="button" class="cust-link" data-open-note="${safe(n.id)}">View update</button>`:''}</span></div>`).join(''):'<div><b>No notifications yet</b><span>New request decisions and account updates will appear here.</span></div>';
  const ticketTable=cust.querySelector('[data-customer-view="tickets"] .cust-note');if(ticketTable){const ids=(tickets.data||[]).map(t=>t.id);const msgs=ids.length?await client.from('ticket_messages').select('id,ticket_id,sender_id,message,created_at').in('ticket_id',ids).order('created_at',{ascending:true}):{data:[],error:null};if(msgs.error)throw msgs.error;const signedAttachments=new Map();for(const m of msgs.data||[]){if(m.attachment_path){const a=await client.storage.from('leadgo-support-files').createSignedUrl(m.attachment_path,300);if(a.data?.signedUrl)signedAttachments.set(m.id,a.data.signedUrl)}}let box=cust.querySelector('#lg47-ticket-history');if(!box){box=document.createElement('div');box.id='lg47-ticket-history';ticketTable.insertAdjacentElement('afterend',box)}box.innerHTML='<h5>Your support conversations</h5>'+(tickets.data||[]).map(t=>'<article class="lg40-card"><b>'+safe(t.subject)+' · '+safe(t.status)+'</b><div class="cust-list">'+(msgs.data||[]).filter(m=>m.ticket_id===t.id).map(m=>'<div><b>'+(m.sender_id===currentUser.id?'You':'Support team')+'</b><span>'+safe(m.message)+(signedAttachments.has(m.id)?' · <a href="'+safe(signedAttachments.get(m.id))+'" target="_blank" rel="noopener">Attachment</a>':'')+' · '+new Date(m.created_at).toLocaleString()+'</span></div>').join('')+'</div>'+(t.status==='closed'?'': '<form class="lg40-form" data-ticket-reply="'+t.id+'"><label class="wide">Reply<textarea name="message" minlength="2" required></textarea></label><button class="lg40-btn">Send reply</button></form>')+'</article>').join('')||'<p>No support tickets yet.</p>';box.querySelectorAll('[data-ticket-reply]').forEach(f=>f.onsubmit=async e=>{e.preventDefault();const message=new FormData(f).get('message').trim();if(!message)return;const q=await client.from('ticket_messages').insert({ticket_id:f.dataset.ticketReply,sender_id:currentUser.id,message});if(q.error)return dbError(q.error);toast('Reply sent.');await loadCustomer()})}
  const walletView=cust.querySelector('[data-customer-view="wallet"]');if(walletView){const m=walletView.querySelector('.cust-metrics');if(m){const ledger=tx.data||[];const deposits=ledger.filter(t=>t.type==='deposit'&&t.status==='completed').reduce((n,t)=>n+Math.abs(Number(t.amount||0)),0);const spent=ledger.filter(t=>t.type==='order'&&t.status==='completed').reduce((n,t)=>n+Math.abs(Number(t.amount||0)),0);m.innerHTML=`<article><small>Available balance</small><strong>${money(wallet.data?.available||0)}</strong></article><article><small>Pending balance</small><strong>${money(wallet.data?.pending||0)}</strong></article><article><small>Total deposits</small><strong>${money(deposits)}</strong></article><article><small>Total spending</small><strong>${money(spent)}</strong></article>`}}
  bindCustomerForms(cust);
@@ -2250,7 +2265,7 @@ const ready=()=>{
  }
  async function loadAdminTable(table){
  const dest=root.querySelector('#lg41-admin-data');if(!dest)return;if(['services','providers','payment_methods','finance','campaign_creatives','referral_program','reseller_pricing'].includes(table))return loadAdminConfig(table);
- if(table==='notifications'){const r=await client.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(100);if(r.error)return dbError(r.error);const rows=r.data||[],unread=rows.filter(x=>!x.read_at).length;dest.innerHTML='<h5>Admin notifications</h5><p class="lg40-muted">New requests and important account activity appear here in real time. Read notifications remain in history.</p><div class="cust-list">'+(rows.map(n=>'<article class="cust-card lg122-notification-item '+(n.read_at?'':'is-unread')+'" data-admin-note="'+safe(n.id)+'"><b>'+safe(n.title||'Admin update')+'</b><p>'+safe(n.body||'A new activity needs your attention.')+'</p><span>'+new Date(n.created_at).toLocaleString()+' · '+(n.read_at?'Read':'Unread')+'</span>'+(n.entity_id?'<button type="button" class="lg40-btn primary" data-open-admin-note="'+safe(n.id)+'">Open request</button>':'')+'</article>').join('')||'<p>No notifications yet.</p>')+'</div>';dest.querySelectorAll('[data-open-admin-note]').forEach(b=>b.onclick=async()=>{const n=rows.find(x=>String(x.id)===String(b.dataset.openAdminNote));if(n&&!n.read_at){const q=await client.from('notifications').update({read_at:new Date().toISOString()}).eq('id',n.id).eq('user_id',currentUser.id);if(q.error)return dbError(q.error)}await refreshAdminNotificationBadge();if(n)await openNotificationTarget('admin',n)});await refreshAdminNotificationBadge();return;}
+ if(table==='notifications'){const r=await client.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(100);if(r.error)return dbError(r.error);const rows=r.data||[],unread=rows.filter(x=>!x.read_at).length;dest.innerHTML='<h5>Admin notifications</h5><p class="lg40-muted">New requests and important account activity appear here in real time. Read notifications remain in history.</p><div class="cust-list">'+(rows.map(n=>'<article class="cust-card lg122-notification-item '+(n.read_at?'':'is-unread')+'" data-admin-note="'+safe(n.id)+'"><b>'+safe(n.title||'Admin update')+'</b><p>'+safe(n.body||'A new activity needs your attention.')+'</p><span>'+new Date(n.created_at).toLocaleString()+' · '+(n.read_at?'Read':'Unread')+'</span>'+(getNotificationDestination(n)?'<button type="button" class="lg40-btn primary" data-open-admin-note="'+safe(n.id)+'">Open update</button>':'')+'</article>').join('')||'<p>No notifications yet.</p>')+'</div>';dest.querySelectorAll('[data-open-admin-note]').forEach(b=>b.onclick=async()=>{const n=rows.find(x=>String(x.id)===String(b.dataset.openAdminNote));if(n&&!n.read_at){const q=await client.from('notifications').update({read_at:new Date().toISOString()}).eq('id',n.id).eq('user_id',currentUser.id);if(q.error)return dbError(q.error);const card=b.closest('[data-admin-note]');card?.classList.remove('is-unread');const state=card?.querySelector('span');if(state)state.textContent=state.textContent.replace('· Unread','· Read')}await refreshAdminNotificationBadge();if(n)await openNotificationTarget('admin',n)});await refreshAdminNotificationBadge();return;}
  if(table==='advertiser_requests'){
   const r=await client.from('advertiser_campaign_requests').select('id,user_id,request_data,status,created_at').order('created_at',{ascending:false}).limit(100);
   if(r.error)return dbError(r.error);

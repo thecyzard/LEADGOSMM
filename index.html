@@ -1,13 +1,28 @@
 <!-- LEADGOSMM v121: adds a clearly labelled Telegram Ads entry to the All-in-One platform overview; all v120 changes retained. -->
 <!-- LEADGOSMM v423: targeted Supabase config isolation and Realtime channel lifecycle hardening. -->
 <!-- LEADGOSMM v425: hide duplicate public navigation while authenticated dashboard is active. -->
-<!-- LEADGOSMM v428: safer NOWPayments checkout retry handling; provider finance baseline retained. -->
+<!-- LEADGOSMM v429: mobile navigation auto-close and deterministic top-of-page initial load; v428 finance baseline retained. -->
 <!doctype html>
 <!-- LEADGOSMM v202: cross-role workflow notification completion; payment integration unchanged. -->
-<html lang="en" data-version="428.0">
+<html lang="en" data-version="429.0">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <script id="leadgo-v429-initial-scroll-guard">
+    (function(){
+      try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (_) {}
+      if (location.hash === '#dashboard') {
+        try { history.replaceState(history.state, '', location.pathname + location.search); } catch (_) {}
+      }
+      document.addEventListener('DOMContentLoaded', function(){
+        var root = document.documentElement;
+        var previous = root.style.scrollBehavior;
+        root.style.scrollBehavior = 'auto';
+        window.scrollTo(0, 0);
+        requestAnimationFrame(function(){ root.style.scrollBehavior = previous; });
+      }, { once: true });
+    })();
+  </script>
   <meta name="theme-color" content="#ffffff" />
   <meta name="description" content="LEADGOSMM is an all-in-one SMM panel for 15+ platforms, orders, tracking, Customer Acquisition campaigns and reseller APIs." />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -2002,8 +2017,12 @@ document.getElementById("get-started").addEventListener("click",e=>{e.preventDef
     document.addEventListener("click",event=>{const button=event.target.closest(".social-icons-hero [data-platform],.platform-wall [data-platform]");if(!button)return;event.preventDefault();const name=button.dataset.platform;selectPlatform(name);requestAnimationFrame(()=>{const target=name==="Customer Acquisition"?document.getElementById("advertiser-request-panel"):name==="Telegram Ads Solution"?document.getElementById("telegram-ads-panel"):document.getElementById("services");if(target){scrollToSection(target);history.replaceState(null,"",name==="Customer Acquisition"?"#advertiser-request":name==="Telegram Ads Solution"?"#telegram-ads":"#services");}});});
     const showAllLink=document.querySelector("[data-show-all]");if(showAllLink)showAllLink.addEventListener("click",e=>{e.preventDefault();if(catalogSearchInput?.value)clearCatalogSearch();active="All";servicesPage=1;document.getElementById("advertiser-request-panel").hidden=true;document.getElementById("telegram-ads-panel").hidden=true;serviceGrid.hidden=false;servicePager.hidden=false;document.getElementById("platform-dropdown")?.classList.remove("open");renderPlatforms();renderServices();updateCatalogLink();document.getElementById("services").scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})});
     document.getElementById("test-free").onclick=()=>{active="All";document.getElementById("advertiser-request-panel").hidden=true;document.getElementById("telegram-ads-panel").hidden=true;serviceGrid.hidden=false;renderPlatforms();renderServices();updateCatalogLink();document.getElementById("services").scrollIntoView({behavior:"smooth",block:"start"})};
-    document.getElementById("menu").onclick=()=>{const nav=document.getElementById("navlinks");const open=nav.classList.toggle("open");document.getElementById("menu").setAttribute("aria-expanded",String(open))};
-    document.querySelectorAll(".navlinks a").forEach(a=>a.addEventListener("click",()=>{document.getElementById("navlinks").classList.remove("open");document.getElementById("menu").setAttribute("aria-expanded","false")}));
+    const mobileMenuButton=document.getElementById("menu"),mobileNav=document.getElementById("navlinks");
+    const closeMobileMenu=()=>{if(!mobileNav||!mobileMenuButton)return;mobileNav.classList.remove("open");mobileMenuButton.setAttribute("aria-expanded","false");mobileMenuButton.setAttribute("aria-label","Open menu")};
+    mobileMenuButton?.addEventListener("click",()=>{const open=!mobileNav.classList.contains("open");mobileNav.classList.toggle("open",open);mobileMenuButton.setAttribute("aria-expanded",String(open));mobileMenuButton.setAttribute("aria-label",open?"Close menu":"Open menu")});
+    document.addEventListener("click",event=>{if(event.target.closest("#navlinks a, #navlinks button")){closeMobileMenu();return}if(!event.target.closest("#navlinks")&&!event.target.closest("#menu"))closeMobileMenu()},true);
+    document.addEventListener("keydown",event=>{if(event.key==="Escape")closeMobileMenu()});
+    window.addEventListener("resize",()=>{if(window.innerWidth>700)closeMobileMenu()},{passive:true});
     // Reseller entry is handled by the authenticated role router below.
     document.querySelectorAll(".workspace-tab").forEach(tab=>tab.addEventListener("click",()=>{document.querySelectorAll(".workspace-tab").forEach(t=>t.classList.toggle("active",t===tab));document.querySelectorAll(".workspace-panel").forEach(panel=>panel.classList.toggle("active",panel.dataset.panel===tab.dataset.workspace))}));
     document.querySelectorAll('[data-panel="customer"] [data-cview]').forEach(btn=>btn.addEventListener("click",()=>{const root=document.querySelector('[data-panel="customer"]');root.querySelectorAll('[data-cview]').forEach(x=>x.classList.toggle("active",x===btn));root.querySelectorAll('[data-customer-view]').forEach(x=>x.classList.toggle("active",x.dataset.customerView===btn.dataset.cview))}));

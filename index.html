@@ -2474,22 +2474,10 @@ const ready=()=>{
         <label>Payment method<select name="payment_method_id" required disabled><option value="">Loading secure payment method…</option></select></label>
         <label>Amount (USD)<input name="amount" type="number" min="1" step="0.01" inputmode="decimal" required></label>
         <label class="wide" id="lg47-crypto-currency-wrap">Cryptocurrency / network
-          <select name="pay_currency" required>
-            <option value="usdttrc20">USDT · TRON (TRC20)</option>
-            <option value="usdtbsc">USDT · BNB Smart Chain (BEP20)</option>
-            <option value="usdterc20">USDT · Ethereum (ERC20)</option>
-            <option value="usdtsol">USDT · Solana</option>
-            <option value="btc">Bitcoin (BTC)</option>
-            <option value="eth">Ethereum (ETH)</option>
-            <option value="ltc">Litecoin (LTC)</option>
-            <option value="trx">TRON (TRX)</option>
-            <option value="bnbbsc">BNB · BNB Smart Chain</option>
-            <option value="sol">Solana (SOL)</option>
-            <option value="usdc">USD Coin (USDC)</option>
-            <option value="xrp">XRP</option>
-            <option value="doge">Dogecoin (DOGE)</option>
-            <option value="ada">Cardano (ADA)</option>
+          <select name="pay_currency" required disabled aria-label="Payment network">
+            <option value="usdtbsc" selected>USDT · BNB Smart Chain (BEP20)</option>
           </select>
+          <small class="lg40-muted">Only USDT on BEP20 (BNB Smart Chain) is supported.</small>
         </label>
         <button class="lg40-btn primary" type="submit" disabled>Continue to secure payment</button>
         <p class="lg40-muted" id="lg47-payment-instructions">Wallet top-ups are processed securely by NOWPayments. Your wallet is credited only after a verified payment confirmation.</p>
@@ -2534,10 +2522,10 @@ const ready=()=>{
       if(cryptoTopupReviewHold){feedback.textContent='This top-up may already have an invoice or needs reconciliation. Do not retry; contact support or wait for Admin review.';return}
       if(!cryptoMethod){feedback.textContent='NOWPayments is not currently available.';return}
       const amount=Number(amountInput.value);
-      const payCurrency=String(currencySelect.value||'').toLowerCase();
+      const payCurrency='usdtbsc';
       if(!Number.isFinite(amount)||amount<=0||Math.round(amount*100)!==amount*100){feedback.textContent='Enter a valid USD amount with up to two decimal places.';amountInput.focus();return}
       if((cryptoMethod.min_amount!=null&&amount<Number(cryptoMethod.min_amount))||(cryptoMethod.max_amount!=null&&amount>Number(cryptoMethod.max_amount))){feedback.textContent='The amount is outside the configured top-up limits.';amountInput.focus();return}
-      if(!payCurrency){feedback.textContent='Choose a cryptocurrency and network.';currencySelect.focus();return}
+      if(payCurrency!=='usdtbsc'){feedback.textContent='Only USDT on BNB Smart Chain (BEP20) is supported.';return}
       cryptoTopupRequestInFlight=true;submitButton.disabled=true;feedback.textContent='Creating your secure NOWPayments invoice…';
       try{
         const result=await client.functions.invoke('nowpayments-create-invoice',{body:{amount,pay_currency:payCurrency}});
